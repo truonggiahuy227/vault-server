@@ -1,9 +1,9 @@
-FROM python:3.6-alpine3.6
+FROM image-registry.openshift-image-registry.svc:5000/openshift/python:3.9-ubi
 
 RUN pip3 install requests
 
 WORKDIR /opt/python
 
-ADD vault-requests-kube.py /opt/python
+ADD main.py /opt/python
 
-CMD ["python","/opt/python/vault-requests-kube.py"]
+CMD ["python","/opt/python/main.py"]

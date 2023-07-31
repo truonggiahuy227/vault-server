@@ -5,7 +5,7 @@ metadata:
 spec:
   initContainers:
   - name: vault-init-container
-    image: vault-init:latest
+    image: image-registry.openshift-image-registry.svc:5000/xplat-test/huytg-python:latest
     imagePullPolicy: Always
     # Environment variables needed for vault authentication injected from secret.   
     envFrom:
@@ -14,17 +14,17 @@ spec:
     volumeMounts:
       # path to store the secrets after fetched from vault
     - name: data
-      mountPath: /opt/conf
+      mountPath: /vault/secret
   containers:
     # Application Container 1 
-  - name: app1
-    image: busybox
-    command: ["/bin/sh","-c","set -a;source /opt/conf/config;env;sleep 3600"]
-   # command: ["/bin/sh","-c","set -a;source /opt/conf/config;env;./app_startup.sh"]
+  - name: httpd
+    image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd:latest'
+    ports:
+      - containerPort: 8080
     volumeMounts:
     # App sources secret file from the same Volume which is mounted by Init container above
     - name: data
-      mountPath: /opt/conf
+      mountPath: /vault/secret
   volumes:
   - name: data
     emptyDir: {}

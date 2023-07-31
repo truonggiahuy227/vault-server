@@ -6,7 +6,7 @@ import os
 import warnings
 import requests
 warnings.filterwarnings("ignore")
-import hvac
+# import hvac
 
 vault_role = os.environ.get('VAULT_ROLE')
 vault_url = os.environ.get('VAULT_URL')
