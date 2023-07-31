@@ -105,7 +105,7 @@ def get_secret_vault(client_token):
         log.exception(
             f'Could not retrieve secrets from Vault. Exception :: {err}')
         raise SystemExit(1)
-    log.info(requests.code)
+    log.info(requests.codes)
 
     if response.status_code == requests.codes.ok:
 
