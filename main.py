@@ -58,10 +58,9 @@ def get_client_token():
 
     try:
         payload = {"jwt": get_kubernetes_token(), "role": vault_role}
-
         log.info("Getting Vault client token using k8s-auth-method ")
         response = requests.post(
-            url=vault_url + '/v1/auth/'+vault_k8s_endpoint+'/config',
+            url=vault_url + '/v1/auth/'+vault_k8s_endpoint+'/login',
             data=json.dumps(payload),
             timeout=(25, 25),
             verify=certspath)
@@ -137,7 +136,7 @@ if __name__ == "__main__":
     log.info('Vault-Init Container Started')
 
     client_token = get_client_token()
-    
+
     get_secret_vault(client_token)
 
     log.info('Vault-Init Container Completed')
