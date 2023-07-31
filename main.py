@@ -18,6 +18,7 @@ secret_target_file = os.environ.get('SECRET_TARGET_FILE')
 secrets_type = os.environ.get('SECRET_TYPE')
 username = os.environ.get('VAULT_USERNAME')
 password = os.environ.get('VAULT_PASSWORD')
+secret_name = os.environ.get('VAULT_SECRET_NAME')
 
 logging.basicConfig(
     format='%(levelname) -5s %(asctime)s %(funcName)- -20s: %(message)s',
@@ -111,16 +112,18 @@ def get_secret_vault(client_token):
 
         try:
             if file_mode:
-                with open((secret_target_path + os.sep + secret_target_file), 'w') as f1:
+                with open((secret_target_path + os.sep + secret_target_file), 'w+') as f1:
                     f1.write(json.loads(response.content)['data'][secret_target_file])
                 log.info(
                     f'Secrets File written to : {secret_target_path}/{secret_target_file}')
 
             if env_mode:
                 secrets = json.loads(response.content)['data']
-                with open((secret_target_path + os.sep + secret_target_file), 'w') as f1:
+                with open((secret_target_path + os.sep + secret_target_file + "/" + secret_name+ ".json"), 'w+') as f1:
+                    f1.write("{" + '\n')
                     for k, v in secrets.items():
-                        f1.write(k + '=' + "'" + v + "'" + '\n')
+                        f1.write('"' + k + '": "' + v + '"' + '\n')
+                    f1.write("}")
                 log.info(
                     f'Secret Variables written to : {secret_target_path}/{secret_target_file}')
         except IOError:
