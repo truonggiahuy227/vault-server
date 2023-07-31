@@ -88,12 +88,12 @@ def get_client_token():
 
 
 def get_secret_vault(client_token):
-
+    log.info(client_token)
     log.info('Getting Secrets from Vault')
 
     try:
         response = requests.get(
-            url=vault_url + '/v1/secret/' + secret_kv_path,
+            url=vault_url + '/v1/' + secret_kv_path,
             headers={"X-Vault-Token": client_token},
             timeout=(25, 25),
             verify=certspath)
@@ -105,6 +105,7 @@ def get_secret_vault(client_token):
         log.exception(
             f'Could not retrieve secrets from Vault. Exception :: {err}')
         raise SystemExit(1)
+    log.info(requests.code)
 
     if response.status_code == requests.codes.ok:
 
