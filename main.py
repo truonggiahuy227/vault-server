@@ -137,7 +137,7 @@ if __name__ == "__main__":
     log.info('Vault-Init Container Started')
 
     client_token = get_client_token()
-x
+    
     get_secret_vault(client_token)
 
     log.info('Vault-Init Container Completed')
