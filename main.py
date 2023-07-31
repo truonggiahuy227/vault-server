@@ -61,7 +61,7 @@ def get_client_token():
 
         log.info("Getting Vault client token using k8s-auth-method ")
         response = requests.post(
-            url=vault_url + '/v1/auth/'+vault_k8s_endpoint+'/login',
+            url=vault_url + '/v1/auth/'+vault_k8s_endpoint+'/config',
             data=json.dumps(payload),
             timeout=(25, 25),
             verify=certspath)
@@ -137,7 +137,7 @@ if __name__ == "__main__":
     log.info('Vault-Init Container Started')
 
     client_token = get_client_token()
-
+x
     get_secret_vault(client_token)
 
     log.info('Vault-Init Container Completed')

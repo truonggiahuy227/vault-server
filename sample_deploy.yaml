@@ -5,7 +5,7 @@ metadata:
 spec:
   initContainers:
   - name: vault-init-container
-    image: image-registry.openshift-image-registry.svc:5000/xplat-test/huytg-python:latest
+    image: image-registry.openshift-image-registry.svc:5000/xplat-test/vault-init-container:latest
     imagePullPolicy: Always
     # Environment variables needed for vault authentication injected from secret.   
     envFrom:
