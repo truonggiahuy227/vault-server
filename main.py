@@ -16,6 +16,8 @@ secret_kv_path = os.environ.get('VAULT_SECRET_PATH')
 secret_target_path = os.environ.get('SECRET_TARGET_PATH')
 secret_target_file = os.environ.get('SECRET_TARGET_FILE')
 secrets_type = os.environ.get('SECRET_TYPE')
+username = os.environ.get('VAULT_USERNAME')
+password = os.environ.get('VAULT_PASSWORD')
 
 logging.basicConfig(
     format='%(levelname) -5s %(asctime)s %(funcName)- -20s: %(message)s',
@@ -25,7 +27,7 @@ logging.basicConfig(
 log = logging.getLogger(__name__) 
 
 
-if any(v in (None, '') for v in[vault_url, vault_role, secret_kv_path, secret_target_path, secret_target_file, secrets_type]):
+if any(v in (None, '') for v in[vault_url, vault_role, secret_kv_path, secret_target_path, secret_target_file, secrets_type, username, password]):
     log.error("Environment Variables not passed incorrectly")
     raise SystemExit(1)
 
@@ -57,10 +59,11 @@ def get_kubernetes_token():
 def get_client_token():
 
     try:
-        payload = {"jwt": get_kubernetes_token(), "role": vault_role}
-        log.info("Getting Vault client token using k8s-auth-method ")
+        # payload = {"jwt": get_kubernetes_token(), "role": vault_role}
+        payload = {"password": password}
+        log.info("Getting Vault client token using username and password ")
         response = requests.post(
-            url=vault_url + '/v1/auth/'+vault_k8s_endpoint+'/login',
+            url=vault_url + '/v1/auth//userpass/login/' + username,
             data=json.dumps(payload),
             timeout=(25, 25),
             verify=certspath)
