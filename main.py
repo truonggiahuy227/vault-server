@@ -63,7 +63,7 @@ def get_client_token():
         payload = {"password": password}
         log.info("Getting Vault client token using username and password ")
         response = requests.post(
-            url=vault_url + '/v1/auth//userpass/login/' + username,
+            url=vault_url + '/v1/auth/userpass/login/' + username,
             data=json.dumps(payload),
             timeout=(25, 25),
             verify=certspath)
