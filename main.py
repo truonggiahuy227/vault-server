@@ -8,10 +8,8 @@ import requests
 warnings.filterwarnings("ignore")
 # import hvac
 
-# vault_role = os.environ.get('VAULT_ROLE')
 vault_url = os.environ.get('VAULT_URL')
 vault_skip_ssl = os.environ.get('VAULT_SKIP_VERIFY')
-# vault_k8s_endpoint = os.environ.get('VAULT_K8S_ENDPOINT')
 secret_kv_path = os.environ.get('VAULT_SECRET_PATH')
 secret_target_path = os.environ.get('SECRET_TARGET_PATH')
 secret_target_file = os.environ.get('SECRET_TARGET_FILE')
@@ -28,7 +26,7 @@ logging.basicConfig(
 log = logging.getLogger(__name__) 
 
 
-if any(v in (None, '') for v in[vault_url, secret_kv_path, secret_target_path, secret_target_file, secrets_type, username, password]):
+if any(v in (None, '') for v in[vault_url, secret_name, secret_kv_path, secret_target_path, secrets_type, username, password]):
     log.error("Environment Variables not passed incorrectly")
     raise SystemExit(1)
 
