@@ -8,10 +8,10 @@ import requests
 warnings.filterwarnings("ignore")
 # import hvac
 
-vault_role = os.environ.get('VAULT_ROLE')
+# vault_role = os.environ.get('VAULT_ROLE')
 vault_url = os.environ.get('VAULT_URL')
 vault_skip_ssl = os.environ.get('VAULT_SKIP_VERIFY')
-vault_k8s_endpoint = os.environ.get('VAULT_K8S_ENDPOINT')
+# vault_k8s_endpoint = os.environ.get('VAULT_K8S_ENDPOINT')
 secret_kv_path = os.environ.get('VAULT_SECRET_PATH')
 secret_target_path = os.environ.get('SECRET_TARGET_PATH')
 secret_target_file = os.environ.get('SECRET_TARGET_FILE')
@@ -28,7 +28,7 @@ logging.basicConfig(
 log = logging.getLogger(__name__) 
 
 
-if any(v in (None, '') for v in[vault_url, vault_role, secret_kv_path, secret_target_path, secret_target_file, secrets_type, username, password]):
+if any(v in (None, '') for v in[vault_url, secret_kv_path, secret_target_path, secret_target_file, secrets_type, username, password]):
     log.error("Environment Variables not passed incorrectly")
     raise SystemExit(1)
 
@@ -38,23 +38,15 @@ if vault_skip_ssl in (None, False):
 else:
     certspath = '/etc/tls/ca.crt'
 
-if vault_k8s_endpoint in ('', None):
-    vault_k8s_endpoint = 'kubernetes'
+# if vault_k8s_endpoint in ('', None):
+#     vault_k8s_endpoint = 'kubernetes'
+
+if secrets_type in ('', None):
+    secrets_type = "variables"
 
 file_mode = True if secrets_type.lower() == 'file' else False
 env_mode = True if secrets_type.lower() == 'variables' else False
 
-
-def get_kubernetes_token():
-
-    log.info("Getting POD Default service account token")
-
-    try:
-        with open('/var/run/secrets/kubernetes.io/serviceaccount/token', mode='r') as f1:
-            return f1.read()
-    except IOError:
-        log.exception('Default Service account token file not found in Pod')
-        raise SystemExit(1)
 
 
 def get_client_token():
@@ -94,7 +86,7 @@ def get_secret_vault(client_token):
 
     try:
         response = requests.get(
-            url=vault_url + '/v1/' + secret_kv_path,
+            url=vault_url + '/v1/' + secret_kv_path + secret_name,
             headers={"X-Vault-Token": client_token},
             timeout=(25, 25),
             verify=certspath)
@@ -119,13 +111,13 @@ def get_secret_vault(client_token):
 
             if env_mode:
                 secrets = json.loads(response.content)['data']
-                with open((secret_target_path + os.sep + secret_target_file + "/" + secret_name+ ".json"), 'w+') as f1:
+                with open((secret_target_path + os.sep + secret_name + ".json"), 'w+') as f1:
                     f1.write("{" + '\n')
                     for k, v in secrets.items():
                         f1.write('"' + k + '": "' + v + '"' + '\n')
                     f1.write("}")
                 log.info(
-                    f'Secret Variables written to : {secret_target_path}/{secret_target_file}')
+                    f'Secret Variables written to : {secret_target_path}/{secret_name}')
         except IOError:
             log.exception(
                 'Secrets target path/file not found,or unable to open,Exiting')
