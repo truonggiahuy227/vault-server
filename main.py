@@ -110,10 +110,10 @@ def get_secret_vault(client_token):
             if env_mode:
                 secrets = json.loads(response.content)['data']
                 with open((secret_target_path + os.sep + secret_name + ".json"), 'w+') as f1:
-                    f1.write("{" + '\n')
+                    dic = {}
                     for k, v in secrets.items():
-                        f1.write('"' + k + '": "' + v + '"' + '\n')
-                    f1.write("}")
+                        dic[k] = eval(v)
+                    f1.write(json.dumps(dic))
                 log.info(
                     f'Secret Variables written to : {secret_target_path}/{secret_name}')
         except IOError:
