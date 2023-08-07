@@ -112,7 +112,7 @@ def get_secret_vault(client_token):
                 with open((secret_target_path + os.sep + secret_name + ".json"), 'w+') as f1:
                     dic = {}
                     for k, v in secrets.items():
-                        dic[k] = eval(v)
+                        dic[k] = v
                     f1.write(json.dumps(dic))
                 log.info(
                     f'Secret Variables written to : {secret_target_path}/{secret_name}')
